@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta
+    http-equiv="Content-Security-Policy"
+    content="default-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; script-src 'self' 'unsafe-inline';"
+  />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Kluely – Responses</title>
+  <style>
+    :root{
+      --bg:#0f1115; --panel:#151923; --muted:#a8b0c2; --text:#e6e8ef; --accent:#6ea8fe;
+      --green:#4ade80; --red:#ff6b6b; --yellow:#fbbf24; --border:#232838;
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font:14px/1.45 ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Arial;
+      color:var(--text); background:transparent;
+    }
+    /* Outer card so the window looks rounded in transparent Electron window */
+    .shell{
+      position:relative;
+      width:100%; height:100%;
+      background:linear-gradient(180deg, #121623 0%, #0f1115 100%);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      overflow:hidden;
+      box-shadow:0 20px 60px rgba(0,0,0,.35);
+    }
+
+    /* Header */
+    .titlebar{
+      -webkit-app-region: drag;
+      display:flex; align-items:center; gap:12px;
+      padding:10px 12px;
+      background:rgba(21,25,35,.7);
+      border-bottom:1px solid var(--border);
+      backdrop-filter:saturate(140%) blur(8px);
+    }
+    .dot{width:10px;height:10px;border-radius:50%}
+    .dot.red{background:#ff5f57}
+    .dot.yellow{background:#febc2e}
+    .dot.green{background:#28c840}
+    .title{font-weight:600; letter-spacing:.2px}
+    .titlebar-actions{margin-left:auto; display:flex; gap:6px; -webkit-app-region: no-drag;}
+    .btn{
+      border:1px solid var(--border); background:var(--panel); color:var(--text);
+      padding:6px 10px; border-radius:10px; cursor:pointer; font-weight:600;
+    }
+    .btn:hover{border-color:#2e3447}
+    .btn.ghost{background:transparent}
+
+    /* Chat area */
+    .scroll{
+      height:calc(100% - 54px - 64px); /* minus header & composer */
+      overflow:auto; padding:16px;
+    }
+    .empty{
+      height:100%; display:grid; place-items:center; color:var(--muted);
+      opacity:.8; text-align:center;
+    }
+
+    .msg{
+      display:flex; gap:12px; margin:10px 0; align-items:flex-start;
+      animation:fadeIn .15s ease-out;
+    }
+    @keyframes fadeIn{from{opacity:0; transform:translateY(4px)}to{opacity:1; transform:none}}
+    .avatar{
+      width:28px;height:28px;border-radius:8px; display:grid; place-items:center;
+      background:#1b2030; color:var(--accent); font-size:13px; font-weight:700;
+      border:1px solid var(--border);
+      flex:0 0 auto;
+    }
+    .bubble{
+      background:var(--panel); border:1px solid var(--border);
+      padding:12px 12px; border-radius:12px; max-width:900px; width:fit-content;
+      box-shadow:inset 0 0 0 1px rgba(255,255,255,.02);
+    }
+    .msg.user .bubble{background:rgba(110,168,254,.08); border-color:#25304a}
+    .meta{font-size:12px; color:var(--muted); margin-bottom:6px}
+    .tools{display:flex; gap:8px; margin-top:8px}
+    .chip{
+      font-size:12px; padding:3px 8px; border:1px solid var(--border);
+      background:#101521; border-radius:999px; color:var(--muted);
+    }
+
+    /* Code blocks */
+    pre{
+      margin:10px 0 0; padding:10px 12px; background:#0e1220; border:1px solid #20263a;
+      border-radius:10px; overflow:auto; font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-size:12.5px;
+    }
+    code.inline{
+      background:#0e1220; border:1px solid #20263a; padding:2px 6px; border-radius:6px;
+    }
+    .copy{
+      -webkit-app-region: no-drag;
+      margin-left:auto; display:inline-flex; align-items:center; gap:6px;
+      font-size:12px; border:1px solid #27304a; background:#0d1222; padding:6px 10px;
+      border-radius:8px; cursor:pointer; color:var(--muted);
+    }
+    .copy:hover{border-color:#334064; color:#c9d1e8}
+
+    /* Composer */
+    .composer{
+      -webkit-app-region: no-drag;
+      display:flex; gap:10px; padding:12px; border-top:1px solid var(--border);
+      background:linear-gradient(180deg,#121623, #11131b);
+    }
+    .input{
+      flex:1; border:1px solid var(--border); background:#0f1423; color:var(--text);
+      padding:10px 12px; border-radius:12px; outline:none;
+    }
+    .send{min-width:92px}
+
+    /* Scrollbar */
+    .scroll::-webkit-scrollbar{width:10px}
+    .scroll::-webkit-scrollbar-thumb{background:#20273a;border-radius:10px}
+    .scroll::-webkit-scrollbar-track{background:transparent}
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <div class="titlebar">
+      <div class="dot red"></div><div class="dot yellow"></div><div class="dot green"></div>
+      <div class="title">Kluely – Responses</div>
+      <div class="titlebar-actions">
+        <button class="btn ghost" id="clearBtn" title="Clear">Clear</button>
+        <button class="btn ghost" id="copyAllBtn" title="Copy all">Copy All</button>
+      </div>
+    </div>
+
+    <div id="scroll" class="scroll">
+      <div class="empty">
+        <div>
+          <div style="font-weight:700;margin-bottom:6px;">No responses yet</div>
+          <div>Ask something from the control bar. Results will appear here.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="composer">
+      <input id="prompt" class="input" placeholder="Type to test UI…" />
+      <button id="send" class="btn send">Send</button>
+    </div>
+  </div>
+
+  <script>
+    const scroll = document.getElementById('scroll');
+    const promptInput = document.getElementById('prompt');
+
+    const state = { count: 0 };
+
+    function ensureNotEmpty() {
+      const empty = scroll.querySelector('.empty');
+      if (empty) empty.remove();
+    }
+    function ts(){
+      const d=new Date();
+      return d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+    }
+    function el(html){
+      const tpl=document.createElement('template');
+      tpl.innerHTML=html.trim();
+      return tpl.content.firstElementChild;
+    }
+    function escapeHTML(str){
+      return str.replace(/[&<>"']/g, s=>({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[s]));
+    }
+    function formatBlocks(text){
+      // simple ```code``` formatter + inline `code`
+      return escapeHTML(text)
+        .replace(/```([\s\S]*?)```/g, (_, code)=>`<pre><code>${code}</code></pre>`)
+        .replace(/`([^`]+)`/g, '<code class="inline">$1</code>')
+        .replace(/\n/g,'<br/>');
+    }
+    function addMessage({ role='assistant', content, meta=[], codeCopy=false }){
+      ensureNotEmpty();
+      const initial = role==='assistant' ? 'A' : 'U';
+      const bubble = `
+        <div class="msg ${role}">
+          <div class="avatar">${initial}</div>
+          <div class="bubble">
+            <div class="meta">${role==='assistant' ? 'Kluely' : 'You'} • ${ts()}</div>
+            <div class="content">${formatBlocks(content)}</div>
+            <div class="tools">
+              ${meta.map(m=>`<span class="chip">${escapeHTML(m)}</span>`).join('')}
+              <button class="copy" data-target="bubble">Copy</button>
+            </div>
+          </div>
+        </div>`;
+      const node = el(bubble);
+      node.querySelector('.copy').addEventListener('click', (e)=>{
+        const text = node.querySelector('.content').innerText;
+        navigator.clipboard.writeText(text).then(()=>{
+          e.currentTarget.textContent = 'Copied!';
+          setTimeout(()=> e.currentTarget.textContent='Copy', 1200);
+        });
+      });
+      scroll.appendChild(node);
+      scroll.scrollTop = scroll.scrollHeight;
+    }
+
+    // Public API you can call from preload via contextBridge
+    window.renderResponse = (text, meta=[]) => addMessage({ role:'assistant', content:text, meta });
+    window.renderUser     = (text, meta=[]) => addMessage({ role:'user', content:text, meta });
+
+    window.clearMessages = () => { scroll.innerHTML = '<div class="empty"><div><div style="font-weight:700;margin-bottom:6px;">Cleared</div><div>Waiting for the next response…</div></div></div>'; };
+
+    // Demo wiring for local testing
+    document.getElementById('send').addEventListener('click', ()=>{
+      const q = promptInput.value.trim();
+      if(!q) return;
+      window.renderUser(q);
+      promptInput.value='';
+      // Fake assistant reply
+      setTimeout(()=>{
+        const ans = `Here is a sample response to: \`${q}\`\n\n- bullet 1\n- bullet 2\n\n\`\`\`\nconst hello = "world";\nconsole.log(hello);\n\`\`\``;
+        window.renderResponse(ans, ['demo', 'local']);
+      }, 300);
+    });
+
+    document.getElementById('clearBtn').addEventListener('click', window.clearMessages);
+    document.getElementById('copyAllBtn').addEventListener('click', ()=>{
+      const text = Array.from(scroll.querySelectorAll('.content')).map(n=>n.innerText).join('\n\n---\n\n');
+      navigator.clipboard.writeText(text);
+    });
+
+    // Optional: auto-focus on load
+    window.addEventListener('load', ()=> promptInput.focus());
+  </script>
+</body>
+</html>
