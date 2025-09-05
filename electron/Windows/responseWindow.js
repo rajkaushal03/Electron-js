@@ -11,7 +11,7 @@ function createResponseWindow() {
 		width: 500,
 		height: 200,
 		x: Math.round((width - 500) / 2),
-		y: 60,
+		y: 70,
 		transparent: true, // overlay style (see Electron docs)
 		frame: false, // this will remove the file,edit frame from the application
 		alwaysOnTop: true, // this will always put the application on top

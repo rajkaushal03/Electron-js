@@ -8,8 +8,8 @@ function createMainWindow() {
 	const { width } = screen.getPrimaryDisplay().workAreaSize;
 	const win = new BrowserWindow({
 		title: "kluely", // Title of the main overlay window
-		width: 300,
-		height: 30,
+		width: 250,
+		height: 35,
 		x: Math.round((width - 300) / 2), // center horizontally
 		y: 20, // stick to the top
 		transparent: false, // overlay style (see Electron docs)

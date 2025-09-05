@@ -1,6 +1,6 @@
 
-const { app, globalShortcut } = require("electron/main");
-const { ensureWindows, toggleWindows, getMainWin, getResponseWin, hideResponseWindow } = require("./managers/windowManager.js");
+const { app } = require("electron/main");
+const { ensureWindows, toggleWindows, getMainWin, getResponseWin, hideResponseWindow, shiftWindows } = require("./managers/windowManager.js");
 const { createTray } = require("./managers/tray/trayManager.js");
 require("./ipc/exit.js");
 
@@ -8,6 +8,7 @@ require("./ipc/exit.js");
 
 
 app.whenReady().then(() => {
+  const { globalShortcut } = require("electron/main");
   ensureWindows();
   createTray(toggleWindows);
 
@@ -16,6 +17,12 @@ app.whenReady().then(() => {
 
   // Register global shortcut Ctrl+R to hide only the response window
   globalShortcut.register('Control+R', hideResponseWindow);
+
+  // Register global shortcut Ctrl+LeftArrow to shift all windows left
+  globalShortcut.register('Control+Left', () => shiftWindows('left'));
+
+  // Register global shortcut Ctrl+RightArrow to shift all windows right
+  globalShortcut.register('Control+Right', () => shiftWindows('right'));
 
   app.on("activate", () => {
     ensureWindows();
@@ -35,5 +42,12 @@ app.on("window-all-closed", () => {
 // Cleanup on quit
 
 app.on('will-quit', () => {
-  globalShortcut.unregisterAll();
+  try {
+    const { globalShortcut } = require("electron/main");
+    if (globalShortcut && typeof globalShortcut.unregisterAll === 'function') {
+      globalShortcut.unregisterAll();
+    }
+  } catch (e) {
+    // ignore
+  }
 });

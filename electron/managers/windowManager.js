@@ -1,3 +1,5 @@
+// --- Window Shifting Logic ---
+const { shiftWindows: shiftWindowsUtil } = require("../utils/shiftWindows.js");
 // Hide only the response window if visible
 function hideResponseWindow() {
   ensureWindows();
@@ -49,4 +51,5 @@ module.exports = {
   getMainWin,
   getResponseWin,
   hideResponseWindow,
+  shiftWindows: (direction) => shiftWindowsUtil(direction, mainWin, responseWin),
 };
