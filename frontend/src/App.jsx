@@ -43,7 +43,7 @@ function App() {
   return (
     <>
       <div className="flex justify-between items-center w-full p-2 text-sm h-full">
-        <div>K</div>
+        <img src="xing.png" alt=""  className="w-5 h-5"/>
         <button className="bg-blue-500 text-white rounded px-4" onClick>Listen</button>
         <div>Chat</div>
         <div className="cursor-pointer text-lg" onClick={handleHide}><BsIncognito /></div>

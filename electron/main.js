@@ -1,10 +1,11 @@
 
 const { app, globalShortcut } = require("electron/main");
-const { ensureWindows, toggleWindows, getMainWin, getResponseWin } = require("./managers/windowManager.js");
+const { ensureWindows, toggleWindows, getMainWin, getResponseWin, hideResponseWindow } = require("./managers/windowManager.js");
 const { createTray } = require("./managers/tray/trayManager.js");
 require("./ipc/exit.js");
 
 // App ready event
+
 
 app.whenReady().then(() => {
   ensureWindows();
@@ -12,6 +13,9 @@ app.whenReady().then(() => {
 
   // Register global shortcut Ctrl+\ to toggle both windows
   globalShortcut.register('Control+\\', toggleWindows);
+
+  // Register global shortcut Ctrl+R to hide only the response window
+  globalShortcut.register('Control+R', hideResponseWindow);
 
   app.on("activate", () => {
     ensureWindows();

@@ -1,3 +1,10 @@
+// Hide only the response window if visible
+function hideResponseWindow() {
+  ensureWindows();
+  if (responseWin && responseWin.isVisible()) {
+    responseWin.hide();
+  }
+}
 // Window manager for Electron app
 // Handles creation and toggling of main and response windows
 
@@ -41,4 +48,5 @@ module.exports = {
   toggleWindows,
   getMainWin,
   getResponseWin,
+  hideResponseWindow,
 };
