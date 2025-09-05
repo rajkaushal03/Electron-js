@@ -8,3 +8,12 @@ window.addEventListener('DOMContentLoaded', () => {
     replaceText(`${type}-version`, process.versions[type])
   }
 })
+
+
+const { contextBridge, ipcRenderer } = require("electron");
+
+contextBridge.exposeInMainWorld("electronAPI", {
+  exitApp: () => ipcRenderer.send("exit-app"),
+  hideBothWindows: () => ipcRenderer.send("hide-both-windows"),
+  toggleBothWindows: () => ipcRenderer.send("toggle-both-windows"),
+});

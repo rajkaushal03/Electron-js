@@ -1,0 +1,13 @@
+{
+  "main": "electron/main.js",
+  "watch": [
+    "electron"
+  ],
+  "ignore": [
+    "frontend",
+    "dist",
+    "node_modules",
+    "temp.wav"
+  ],
+  "exec": "electron ."
+}
