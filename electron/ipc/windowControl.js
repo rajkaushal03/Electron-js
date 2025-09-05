@@ -1,4 +1,6 @@
+
 const { ipcMain } = require("electron");
+const { isWindowVisible } = require("../utils/function.js");
 
 let mainWinRef = null;
 let responseWinRef = null;
@@ -11,9 +13,7 @@ function setResponseWin(win) {
   responseWinRef = win;
 }
 
-function isWindowVisible(win) {
-  return win && win.isVisible();
-}
+
 
 ipcMain.on("hide-both-windows", () => {
   if (mainWinRef) mainWinRef.hide();
@@ -25,8 +25,16 @@ ipcMain.on("toggle-both-windows", () => {
   const shouldShow = !isWindowVisible(mainWinRef) || !isWindowVisible(responseWinRef);
   if (mainWinRef && responseWinRef) {
     if (shouldShow) {
-      mainWinRef.show();
-      responseWinRef.show();
+      if (typeof mainWinRef.showInactive === 'function') {
+        mainWinRef.showInactive();
+      } else {
+        mainWinRef.show();
+      }
+      if (typeof responseWinRef.showInactive === 'function') {
+        responseWinRef.showInactive();
+      } else {
+        responseWinRef.show();
+      }
     } else {
       mainWinRef.hide();
       responseWinRef.hide();
