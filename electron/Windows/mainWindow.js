@@ -26,6 +26,9 @@ function createMainWindow() {
 		},
 			show: true, // start visible by default
 		});
+	// Store original size for bulletproof shifting
+	win._originalWidth = 250;
+	win._originalHeight = 35;
 		// win.setIgnoreMouseEvents(true); // Uncomment for click-through overlay
 		// win.webContents.openDevTools(); // Open DevTools for debugging
 		// win.loadFile(path.join(__dirname, "../index.html"));

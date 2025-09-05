@@ -19,13 +19,16 @@ function createResponseWindow() {
 		resizable: false,
 		fullscreen: false,
 		backgroundColor: "#00000000", // fully transparent
-	focusable: true, // allow window to receive focus and be interactive
+		focusable: true, // allow window to receive focus and be interactive
 		hasShadow: false,
 		webPreferences: {
 			preload: path.join(__dirname, "../preload.js"),
 		},
 			show: true, // start visible by default
 		});
+	// Store original size for bulletproof shifting
+	responseWin._originalWidth = 500;
+	responseWin._originalHeight = 200;
 		// responseWin.setIgnoreMouseEvents(true); // Uncomment for click-through overlay
 		responseWin.setContentProtection(true);
 		responseWin.loadFile(path.join(__dirname, "../responses.html"));

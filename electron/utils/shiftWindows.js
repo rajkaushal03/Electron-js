@@ -46,8 +46,37 @@ function shiftWindows(direction, mainWin, responseWin) {
   }
   // After clamping, check again: if movement is now zero, do nothing
   if (delta === 0) return;
+  // Move both windows as a locked group, preserving spacing and size
+  // Find leftmost and rightmost edges of the group
+  const groupLeft = Math.min(mainX, respX);
+  const groupRight = Math.max(mainX + mainWidth, respX + respWidth);
+  // Clamp delta so the group never goes off screen
+  let minDelta = -Infinity, maxDelta = Infinity;
+  // Left edge cannot go past 0
+  minDelta = -groupLeft;
+  // Right edge cannot go past screenWidth
+  maxDelta = screenWidth - groupRight;
+  // Clamp delta
+  if (delta < minDelta) delta = minDelta;
+  if (delta > maxDelta) delta = maxDelta;
+  if (delta === 0) return;
   // Move both windows by the same delta, always preserving their width and spacing
-  mainWin.setPosition(mainX + delta, mainY);
-  responseWin.setPosition(respX + delta, respY);
+  // Always use original width/height to prevent any stretching
+  const origMainWidth = mainWin._originalWidth || mainWidth;
+  const origMainHeight = mainWin._originalHeight || mainWin.getBounds().height;
+  const origRespWidth = responseWin._originalWidth || respWidth;
+  const origRespHeight = responseWin._originalHeight || responseWin.getBounds().height;
+  mainWin.setBounds({
+    x: mainX + delta,
+    y: mainY,
+    width: origMainWidth,
+    height: origMainHeight
+  });
+  responseWin.setBounds({
+    x: respX + delta,
+    y: respY,
+    width: origRespWidth,
+    height: origRespHeight
+  });
 }
 module.exports = { shiftWindows };
