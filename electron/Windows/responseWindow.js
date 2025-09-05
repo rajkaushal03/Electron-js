@@ -19,7 +19,7 @@ function createResponseWindow() {
 		resizable: false,
 		fullscreen: false,
 		backgroundColor: "#00000000", // fully transparent
-		focusable: true, // allow window to receive focus and be interactive
+		focusable: false, // allow window to receive focus and be interactive
 		hasShadow: false,
 		webPreferences: {
 			preload: path.join(__dirname, "../preload.js"),

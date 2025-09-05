@@ -1,7 +1,7 @@
 
 import { ImExit } from "react-icons/im";
 import { useEffect } from "react";
-
+import { BsIncognito } from "react-icons/bs";
 function App() {
 
   const handleExit = () => {
@@ -42,11 +42,11 @@ function App() {
 
   return (
     <>
-      <div className="flex justify-between items-center w-full p-2 text-xs h-full">
+      <div className="flex justify-between items-center w-full p-2 text-sm h-full">
         <div>K</div>
         <button className="bg-blue-500 text-white rounded px-4" onClick>Listen</button>
-        <div>Ask/Question</div>
-        <div className="cursor-pointer" onClick={handleHide}>Hide</div>
+        <div>Chat</div>
+        <div className="cursor-pointer text-lg" onClick={handleHide}><BsIncognito /></div>
         <div className="cursor-pointer text-lg text-red-500" onClick={handleExit}><ImExit /></div>
       </div>
     </>
