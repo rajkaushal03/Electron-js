@@ -9,7 +9,7 @@ let tray = null;
 
 function createTray(toggleWindows) {
   if (tray) return tray;
-    const iconPath = path.join(__dirname, "../../frontend/public/vite.svg");
+    const iconPath = path.join(__dirname, "../../../frontend/public/xing.png");
     const trayIcon = nativeImage.createFromPath(iconPath);
   tray = new Tray(trayIcon);
   const contextMenu = Menu.buildFromTemplate([
